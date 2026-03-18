@@ -312,7 +312,8 @@ body.dark .ad-card {
   // If directly opened /category/*
   if (path.startsWith("/category/")) {
     sessionStorage.setItem("redirect", path);
-    window.location.replace("/");
+
+    window.location.replace("https://www.publicapihub.com/");
     return;
   }
 
