@@ -309,14 +309,6 @@ body.dark .ad-card {
 (function () {
   const path = window.location.pathname;
 
-  // If directly opened /category/*
-  if (path.startsWith("/category/")) {
-    sessionStorage.setItem("redirect", path);
-
-    window.location.replace("https://www.publicapihub.com/");
-    return;
-  }
-
   // Restore after redirect
   const redirect = sessionStorage.getItem("redirect");
   if (redirect) {
