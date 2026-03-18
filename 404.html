@@ -8,47 +8,20 @@
     (function () {
       const path = location.pathname + location.search;
 
-      // Save the requested path
-      sessionStorage.setItem("redirect", path);
+      // Save path ONLY if not homepage
+      if (path !== "/" && path !== "/index.html") {
+        sessionStorage.setItem("redirect", path);
+      }
 
-      // 🔒 Force HTTPS + WWW (optional but recommended)
-      const targetDomain = "http://www.publicapihub.com";
-
-      // Redirect ALWAYS to homepage
-      window.location.replace(targetDomain + "/");
+      // Redirect to homepage
+      window.location.replace(location.origin + "/");
     })();
   </script>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      background: #f9fafb;
-    }
-
-    .box {
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 42px;
-      margin-bottom: 10px;
-    }
-
-    p {
-      color: #666;
-    }
-  </style>
 </head>
 
 <body>
-  <div class="box">
-    <h1>🔄 Redirecting...</h1>
-    <p>Please wait...</p>
-  </div>
+  <h2 style="text-align:center;margin-top:20%">
+    🔄 Redirecting...
+  </h2>
 </body>
 </html>
