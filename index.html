@@ -390,6 +390,11 @@ function applyCategoryFromURL() {
 
   if (path.startsWith("/category/")) {
     slug = decodeURIComponent(path.split("/category/")[1]);
+
+// 🔥 FIX: remove trailing slash
+    if (slug.endsWith("/")) {
+      slug = slug.slice(0, -1);
+    }
   }
 
   if (!slug || slug === "all") {
