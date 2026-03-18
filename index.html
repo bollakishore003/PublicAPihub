@@ -309,9 +309,27 @@ let filtered = [];
 let page = 1;
 const limit = 12;
 let favs = JSON.parse(localStorage.getItem("fav")) || [];
+
+/* =========================
+   URL CATEGORY LOGIC
+========================= */
 let activeCategory = "All";
 
-// FIXED mapping
+function getCategoryFromURL() {
+  const path = window.location.pathname;
+
+  if (path.startsWith("/category/")) {
+    return decodeURIComponent(path.split("/category/")[1])
+      .replace(/-/g, " ")
+      .toLowerCase();
+  }
+
+  return "all";
+}
+
+/* =========================
+   API MAPPING
+========================= */
 function mapAPI(api) {
   return {
     name: api.name || "Unknown API",
@@ -325,39 +343,9 @@ function mapAPI(api) {
   };
 }
 
-function openStatic(type) {
-  const modal = document.getElementById("modal");
-  const body = document.getElementById("modalBody");
-
-  if (type === "about") {
-    body.innerHTML = `
-      <h2>About Public API Hub</h2>
-      <p>
-        Public API Hub is a modern directory of public APIs designed to help developers 
-        discover, explore, and integrate APIs quickly.
-      </p>
-      <p>
-        Built for speed, simplicity, and scalability.
-      </p>
-    `;
-  }
-
-  if (type === "privacy") {
-    body.innerHTML = `
-      <h2>Privacy Policy</h2>
-      <p>
-        We do not collect personal data directly. 
-        Some third-party services (like ads) may use cookies.
-      </p>
-      <p>
-        Your favorites are stored locally in your browser.
-      </p>
-    `;
-  }
-
-  modal.style.display = "flex";
-}
-
+/* =========================
+   FETCH DATA
+========================= */
 fetch("Public_APIs_Organized.json")
 .then(r => r.json())
 .then(j => {
@@ -371,45 +359,90 @@ fetch("Public_APIs_Organized.json")
     });
   });
 
-  filtered = [...all];
+  // Apply category from URL
+  applyCategoryFromURL();
+
   loadCategories();
   render();
 });
 
-// CATEGORY UI
+/* =========================
+   APPLY CATEGORY FROM URL
+========================= */
+function applyCategoryFromURL() {
+  const urlCat = getCategoryFromURL();
+
+  if (urlCat === "all") {
+    activeCategory = "All";
+    filtered = [...all];
+  } else {
+    const found = Object.keys(raw).find(
+      c => c.toLowerCase() === urlCat
+    );
+
+    if (found) {
+      activeCategory = found;
+      filtered = all.filter(x => x.cat === found);
+
+      document.title = found + " APIs - Public API Hub";
+    } else {
+      activeCategory = "All";
+      filtered = [...all];
+    }
+  }
+
+  page = 1;
+}
+
+/* =========================
+   CATEGORY UI
+========================= */
 function loadCategories() {
   const el = document.getElementById("categories");
 
   el.innerHTML = `
-    <div class="category ${activeCategory==="All"?"active":""}" onclick="showAll()">All</div>
+    <div class="category ${activeCategory==="All"?"active":""}" onclick="navigateCategory('All')">
+      All
+    </div>
   `;
 
   Object.keys(raw).forEach(c => {
     el.innerHTML += `
-      <div class="category ${activeCategory===c?"active":""}" onclick="filterCat('${c}')">
+      <div class="category ${activeCategory===c?"active":""}" onclick="navigateCategory('${c}')">
         ${c}
       </div>
     `;
   });
 }
 
-function showAll() {
-  activeCategory = "All";
-  filtered = [...all];
-  page = 1;
-  render();
+/* =========================
+   NAVIGATION (NO RELOAD)
+========================= */
+function navigateCategory(cat) {
+  if (cat === "All") {
+    window.history.pushState({}, "", "/");
+  } else {
+    const slug = cat.toLowerCase().replace(/\s+/g, "-");
+    window.history.pushState({}, "", "/category/" + slug);
+  }
+
+  applyCategoryFromURL();
   loadCategories();
+  render();
 }
 
-function filterCat(cat) {
-  activeCategory = cat;
-  filtered = all.filter(x => x.cat === cat);
-  page = 1;
-  render();
+/* =========================
+   BACK BUTTON SUPPORT
+========================= */
+window.onpopstate = () => {
+  applyCategoryFromURL();
   loadCategories();
-}
+  render();
+};
 
-// RENDER
+/* =========================
+   RENDER
+========================= */
 function render() {
   const list = document.getElementById("list");
   list.innerHTML = "";
@@ -419,19 +452,19 @@ function render() {
 
   data.forEach((api, index) => {
 
-    // 👉 Create API Card
+    const realIndex = start + index;
+
     const card = document.createElement("div");
     card.className = "card";
-    card.onclick = () => openModal(start + index);
+    card.onclick = () => openModal(realIndex);
 
     card.innerHTML = `
       <div class="card-top">
         <img class="logo" 
-            src="${api.logo || 'https://via.placeholder.com/40'}"
-            onerror="this.src='https://via.placeholder.com/40'">
+          src="${api.logo || 'https://via.placeholder.com/40'}"
+          onerror="this.src='https://via.placeholder.com/40'">
         <div class="title">
-          ${api.name || "Unknown API"}
-          ${api.sponsored ? '<span class="badge">Sponsored</span>' : ''}
+          ${api.name}
         </div>
       </div>
       <div class="desc">${api.desc}</div>
@@ -439,26 +472,27 @@ function render() {
 
     list.appendChild(card);
 
-    // 💰 INSERT AD AFTER EVERY 6 ITEMS
+    // 🔥 Ad every 6 cards
     if ((index + 1) % 6 === 0) {
       const ad = document.createElement("div");
       ad.className = "ad-card";
 
-    ad.innerHTML = `
-    <div class="card-top">
-        <img src="https://via.placeholder.com/40">
-        <div class="title">
-        Promote Your API 🚀
-        <span class="badge">Sponsored</span>
+      ad.innerHTML = `
+        <div class="card-top">
+          <img src="https://via.placeholder.com/40">
+          <div class="title">
+            Promote Your API 🚀
+          </div>
         </div>
-    </div>
+        <div class="desc">
+          Get featured here and reach thousands of developers.
+        </div>
+        <div class="ad-badge">💰 Sponsored</div>
+      `;
 
-    <div class="desc">
-        Get featured here and reach thousands of developers.
-    </div>
-
-    <div class="ad-badge">💰 Sponsored Listing</div>
-    `;
+      ad.onclick = () => {
+        window.open("https://your-promo-link.com", "_blank");
+      };
 
       list.appendChild(ad);
     }
@@ -467,7 +501,10 @@ function render() {
 
   paginate();
 }
-// PAGINATION
+
+/* =========================
+   PAGINATION
+========================= */
 function paginate() {
   let total = Math.ceil(filtered.length / limit);
   let el = document.getElementById("pages");
@@ -477,46 +514,29 @@ function paginate() {
     return;
   }
 
-  let html = `<span style="margin-right:10px">Page:</span>`;
+  let html = `<span>Page:</span>`;
 
-  let start = Math.max(1, page - 2);
-  let end = Math.min(total, page + 2);
-
-  // Previous
-  if (page > 1) {
-    html += `<span onclick="goto(${page-1})" style="margin:5px;cursor:pointer">«</span>`;
-  }
-
-  for (let i = start; i <= end; i++) {
+  for (let i = 1; i <= total; i++) {
     html += `
       <span onclick="goto(${i})"
-        style="
-          margin:5px;
-          padding:6px 10px;
-          border-radius:6px;
-          cursor:pointer;
-          ${i === page 
-            ? 'background:#2563eb;color:white;' 
-            : 'color:var(--text);'}
-        ">
+        style="margin:5px;cursor:pointer;
+        ${i===page?'font-weight:bold;color:#2563eb':''}">
         ${i}
       </span>
     `;
   }
 
-  // Next
-  if (page < total) {
-    html += `<span onclick="goto(${page+1})" style="margin:5px;cursor:pointer">»</span>`;
-  }
-
   el.innerHTML = html;
 }
+
 function goto(p){
   page = p;
   render();
 }
 
-// SEARCH
+/* =========================
+   SEARCH
+========================= */
 function searchAPI(val){
   filtered = all.filter(x =>
     x.name.toLowerCase().includes(val.toLowerCase())
@@ -525,35 +545,11 @@ function searchAPI(val){
   render();
 }
 
-// CATEGORY SEARCH
-function filterCategories(val){
-  document.querySelectorAll(".category").forEach(c=>{
-    c.style.display = c.innerText.toLowerCase().includes(val.toLowerCase()) ? "" : "none";
-  });
-}
-
-// FAVORITES
-function fav(e,name){
-  e.stopPropagation();
-
-  if(favs.includes(name)){
-    favs = favs.filter(f=>f!==name);
-  } else {
-    favs.push(name);
-  }
-
-  localStorage.setItem("fav", JSON.stringify(favs));
-  render();
-}
-
-// DARK MODE
-function toggleDark(){
-  document.body.classList.toggle("dark");
-}
-
-// MODAL
+/* =========================
+   MODAL
+========================= */
 function openModal(i) {
-  const api = filtered[(page - 1) * limit + i];
+  const api = filtered[i];
   if (!api) return;
 
   const modal = document.getElementById("modal");
@@ -576,34 +572,33 @@ function openModal(i) {
       </span>
     </div>
 
-    ${
-      api.link
-        ? `<a href="${api.link}" target="_blank"
-            style="
-              display:inline-block;
-              padding:10px 16px;
-              background:#2563eb;
-              color:white;
-              border-radius:8px;
-              text-decoration:none;
-            ">
-            🔗 Visit API
-          </a>`
-        : `<div style="color:gray">No link available</div>`
-    }
+    <a href="${api.link}" target="_blank"
+      style="
+        display:inline-block;
+        padding:10px 16px;
+        background:#2563eb;
+        color:white;
+        border-radius:8px;
+        text-decoration:none;
+      ">
+      🔗 Visit API
+    </a>
   `;
 
   modal.style.display = "flex";
 }
 
-ad.onclick = () => {
-  window.open("https://your-promo-link.com", "_blank");
-};
-
 function closeModal(e) {
   if (e.target.id === "modal" || e.target.classList.contains("close")) {
     document.getElementById("modal").style.display = "none";
   }
+}
+
+/* =========================
+   DARK MODE
+========================= */
+function toggleDark(){
+  document.body.classList.toggle("dark");
 }
 </script>
 
