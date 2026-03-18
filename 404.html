@@ -2,12 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Page Not Found</title>
+  <title>Redirecting...</title>
 
   <script>
-    // Save the current path and redirect to home
+    // 🔒 Force HTTPS
+    if (location.protocol !== 'https:') {
+      location.replace('https://' + location.host + location.pathname + location.search);
+    }
+
+    // Save path for SPA redirect
     sessionStorage.redirect = location.pathname + location.search;
-    window.location.href = "/";
+
+    // Redirect to homepage
+    window.location.replace('/');
   </script>
 
   <style>
@@ -26,7 +33,7 @@
     }
 
     h1 {
-      font-size: 48px;
+      font-size: 42px;
       margin-bottom: 10px;
     }
 
@@ -38,8 +45,8 @@
 
 <body>
   <div class="box">
-    <h1>404</h1>
-    <p>Redirecting...</p>
+    <h1>🔄 Redirecting...</h1>
+    <p>Please wait...</p>
   </div>
 </body>
 </html>

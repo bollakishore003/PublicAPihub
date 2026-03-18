@@ -326,6 +326,11 @@ let activeCategory = "All";
   }
 })();
 
+// 🔒 Force HTTPS globally
+if (location.protocol !== 'https:') {
+  location.replace('https://' + location.host + location.pathname + location.search);
+}
+
 function getCategoryFromURL() {
   const path = window.location.pathname;
 
