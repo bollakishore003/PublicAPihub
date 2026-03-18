@@ -306,14 +306,7 @@ body.dark .ad-card {
 // 🚀 FORCE ALL /category/* TO LOAD INDEX
 // 🚀 FORCE /category/* → load index.html
 // 🚀 HANDLE CATEGORY URL + REDIRECT CLEANLY
-(function () {
-  const redirect = sessionStorage.getItem("redirect");
 
-  if (redirect) {
-    sessionStorage.removeItem("redirect");
-    window.history.replaceState(null, null, redirect);
-  }
-})();
 
 
 let raw = {};
