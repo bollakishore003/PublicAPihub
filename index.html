@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Public API Hub</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #f9fafb;
+  --card: #ffffff;
+  --text: #111;
+  --muted: #666;
+  --border: #e5e7eb;
+}
+
+body.dark {
+  --bg: #0f172a;
+  --card: #111827;
+  --text: #f9fafb;
+  --muted: #9ca3af;
+  --border: #1f2937;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* HEADER */
+header {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+
+/* LAYOUT */
+.container {
+  display: flex;
+  height: calc(100vh - 65px);
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 260px;
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  padding: 15px;
+  overflow-y: auto;
+}
+
+.category {
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.category:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+body.dark .category:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.category.active {
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+}
+
+/* MAIN */
+.main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* SEARCH */
+.search {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* CARD */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  transition: 0.3s;
+  cursor: pointer; /* 👈 ADD THIS */
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* TITLE */
+.title {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+
+
+.logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #fff;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.api-link {
+  cursor: pointer;
+  color: #2563eb;
+}
+
+.api-link:hover {
+  text-decoration: underline;
+}
+
+/* DESC */
+.desc {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+/* FAVORITE */
+.fav {
+  cursor: pointer;
+}
+
+/* PAGINATION */
+.pagination {
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* MODAL */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: var(--card);
+  padding: 25px;
+  border-radius: 16px;
+  width: 500px;
+}
+.ad {
+  border: 1px dashed var(--border);
+  padding: 20px;
+  text-align: center;
+  margin: 15px 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f3f4f6, #ffffff);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+body.dark .ad {
+  background: linear-gradient(135deg, #1f2937, #111827);
+}
+
+.ad-card {
+  background: var(--card);
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  transition: 0.3s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ad-card:hover {
+  transform: translateY(-5px);
+  border-color: #2563eb;
+}
+
+.ad-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.ad-desc {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.ad-badge {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #2563eb;
+}
+
+body.dark .ad-card {
+  background: linear-gradient(135deg, #1f2937, #111827);
+}
+.nav-link {
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--muted);
+  transition: 0.2s;
+}
+
+.nav-link:hover {
+  color: #2563eb;
+}
+
+@media (max-width: 768px) {
+  .ad-card {
+    grid-column: span 1;
+  }
+}
+
+.close {
+  float: right;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h3>🚀 API Hub</h3>
+
+  <div style="display:flex; gap:15px; align-items:center;">
+    
+    <span class="nav-link" onclick="openStatic('about')">About</span>
+    <span class="nav-link" onclick="openStatic('privacy')">Privacy</span>
+
+    <button onclick="toggleDark()">🌙</button>
+  </div>
+</header>
+
+<div class="container">
+
+<div class="sidebar">
+  <input class="search" placeholder="Search categories..." onkeyup="filterCategories(this.value)">
+  <div id="categories"></div>
+</div>
+
+<div class="main">
+  <input class="search" placeholder="🔍 Search APIs..." onkeyup="searchAPI(this.value)">
+
+  <div class="ad">
+    💰 Your Ad Here (Google AdSense / Sponsor)
+  </div>
+
+  <div id="list" class="grid"></div>
+  <div class="pagination" id="pages"></div>
+</div>
+
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal" onclick="closeModal(event)">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal(event)">×</span>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+let raw = {};
+let all = [];
+let filtered = [];
+let page = 1;
+const limit = 12;
+let favs = JSON.parse(localStorage.getItem("fav")) || [];
+let activeCategory = "All";
+
+// FIXED mapping
+function mapAPI(api) {
+  return {
+    name: api.name || "Unknown API",
+    desc: api.description || "No description available",
+    link: api.link || "",
+    pricing: api.pricing || "Free",
+    auth: api.auth || "No Auth",
+    https: api.https || false,
+    logo: api.logo || "",
+    sponsored: api.sponsored || false
+  };
+}
+
+function openStatic(type) {
+  const modal = document.getElementById("modal");
+  const body = document.getElementById("modalBody");
+
+  if (type === "about") {
+    body.innerHTML = `
+      <h2>About API Hub</h2>
+      <p>
+        API Hub is a modern directory of public APIs designed to help developers 
+        discover, explore, and integrate APIs quickly.
+      </p>
+      <p>
+        Built for speed, simplicity, and scalability.
+      </p>
+    `;
+  }
+
+  if (type === "privacy") {
+    body.innerHTML = `
+      <h2>Privacy Policy</h2>
+      <p>
+        We do not collect personal data directly. 
+        Some third-party services (like ads) may use cookies.
+      </p>
+      <p>
+        Your favorites are stored locally in your browser.
+      </p>
+    `;
+  }
+
+  modal.style.display = "flex";
+}
+
+fetch("Public_APIs_Organized.json")
+.then(r => r.json())
+.then(j => {
+  raw = j;
+
+  Object.keys(j).forEach(cat => {
+    j[cat].forEach(a => {
+      let x = mapAPI(a);
+      x.cat = cat;
+      all.push(x);
+    });
+  });
+
+  filtered = [...all];
+  loadCategories();
+  render();
+});
+
+// CATEGORY UI
+function loadCategories() {
+  const el = document.getElementById("categories");
+
+  el.innerHTML = `
+    <div class="category ${activeCategory==="All"?"active":""}" onclick="showAll()">All</div>
+  `;
+
+  Object.keys(raw).forEach(c => {
+    el.innerHTML += `
+      <div class="category ${activeCategory===c?"active":""}" onclick="filterCat('${c}')">
+        ${c}
+      </div>
+    `;
+  });
+}
+
+function showAll() {
+  activeCategory = "All";
+  filtered = [...all];
+  page = 1;
+  render();
+  loadCategories();
+}
+
+function filterCat(cat) {
+  activeCategory = cat;
+  filtered = all.filter(x => x.cat === cat);
+  page = 1;
+  render();
+  loadCategories();
+}
+
+// RENDER
+function render() {
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  const start = (page - 1) * limit;
+  const data = filtered.slice(start, start + limit);
+
+  data.forEach((api, index) => {
+
+    // 👉 Create API Card
+    const card = document.createElement("div");
+    card.className = "card";
+    card.onclick = () => openModal(start + index);
+
+    card.innerHTML = `
+      <div class="card-top">
+        <img class="logo" 
+            src="${api.logo || 'https://via.placeholder.com/40'}"
+            onerror="this.src='https://via.placeholder.com/40'">
+        <div class="title">
+          ${api.name || "Unknown API"}
+          ${api.sponsored ? '<span class="badge">Sponsored</span>' : ''}
+        </div>
+      </div>
+      <div class="desc">${api.desc}</div>
+    `;
+
+    list.appendChild(card);
+
+    // 💰 INSERT AD AFTER EVERY 6 ITEMS
+    if ((index + 1) % 6 === 0) {
+      const ad = document.createElement("div");
+      ad.className = "ad-card";
+
+    ad.innerHTML = `
+    <div class="card-top">
+        <img src="https://via.placeholder.com/40">
+        <div class="title">
+        Promote Your API 🚀
+        <span class="badge">Sponsored</span>
+        </div>
+    </div>
+
+    <div class="desc">
+        Get featured here and reach thousands of developers.
+    </div>
+
+    <div class="ad-badge">💰 Sponsored Listing</div>
+    `;
+
+      list.appendChild(ad);
+    }
+
+  });
+
+  paginate();
+}
+// PAGINATION
+function paginate() {
+  let total = Math.ceil(filtered.length / limit);
+  let el = document.getElementById("pages");
+
+  if (total <= 1) {
+    el.innerHTML = "";
+    return;
+  }
+
+  let html = `<span style="margin-right:10px">Page:</span>`;
+
+  let start = Math.max(1, page - 2);
+  let end = Math.min(total, page + 2);
+
+  // Previous
+  if (page > 1) {
+    html += `<span onclick="goto(${page-1})" style="margin:5px;cursor:pointer">«</span>`;
+  }
+
+  for (let i = start; i <= end; i++) {
+    html += `
+      <span onclick="goto(${i})"
+        style="
+          margin:5px;
+          padding:6px 10px;
+          border-radius:6px;
+          cursor:pointer;
+          ${i === page 
+            ? 'background:#2563eb;color:white;' 
+            : 'color:var(--text);'}
+        ">
+        ${i}
+      </span>
+    `;
+  }
+
+  // Next
+  if (page < total) {
+    html += `<span onclick="goto(${page+1})" style="margin:5px;cursor:pointer">»</span>`;
+  }
+
+  el.innerHTML = html;
+}
+function goto(p){
+  page = p;
+  render();
+}
+
+// SEARCH
+function searchAPI(val){
+  filtered = all.filter(x =>
+    x.name.toLowerCase().includes(val.toLowerCase())
+  );
+  page = 1;
+  render();
+}
+
+// CATEGORY SEARCH
+function filterCategories(val){
+  document.querySelectorAll(".category").forEach(c=>{
+    c.style.display = c.innerText.toLowerCase().includes(val.toLowerCase()) ? "" : "none";
+  });
+}
+
+// FAVORITES
+function fav(e,name){
+  e.stopPropagation();
+
+  if(favs.includes(name)){
+    favs = favs.filter(f=>f!==name);
+  } else {
+    favs.push(name);
+  }
+
+  localStorage.setItem("fav", JSON.stringify(favs));
+  render();
+}
+
+// DARK MODE
+function toggleDark(){
+  document.body.classList.toggle("dark");
+}
+
+// MODAL
+function openModal(i) {
+  const api = filtered[(page - 1) * limit + i];
+  if (!api) return;
+
+  const modal = document.getElementById("modal");
+  const body = document.getElementById("modalBody");
+
+  const isPaid = api.pricing.toLowerCase().includes("paid");
+
+  body.innerHTML = `
+    <h2>${api.name}</h2>
+    <p>${api.desc}</p>
+
+    <div style="margin:15px 0">
+      <span style="
+        padding:6px 10px;
+        border-radius:8px;
+        color:white;
+        background:${isPaid ? '#ef4444' : '#10b981'};
+      ">
+        ${isPaid ? '💰 Paid' : '🆓 Free'}
+      </span>
+    </div>
+
+    ${
+      api.link
+        ? `<a href="${api.link}" target="_blank"
+            style="
+              display:inline-block;
+              padding:10px 16px;
+              background:#2563eb;
+              color:white;
+              border-radius:8px;
+              text-decoration:none;
+            ">
+            🔗 Visit API
+          </a>`
+        : `<div style="color:gray">No link available</div>`
+    }
+  `;
+
+  modal.style.display = "flex";
+}
+
+ad.onclick = () => {
+  window.open("https://your-promo-link.com", "_blank");
+};
+
+function closeModal(e) {
+  if (e.target.id === "modal" || e.target.classList.contains("close")) {
+    document.getElementById("modal").style.display = "none";
+  }
+}
+</script>
+
+</body>
+</html>
