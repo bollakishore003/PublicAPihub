@@ -166,6 +166,49 @@ body.dark .category:hover {
   margin-top: 20px;
 }
 
+.page-btn {
+  padding: 8px 14px;
+  margin: 5px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #2563eb;
+  color: white;
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.page-num {
+  margin: 5px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.page-num:hover {
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.active-page {
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+}
+
+.dots {
+  margin: 5px;
+  color: var(--muted);
+}
+
 /* MODAL */
 .modal {
   position: fixed;
@@ -567,17 +610,47 @@ function paginate() {
     return;
   }
 
-  let html = `<span>Page:</span>`;
+  let html = "";
 
-  for (let i = 1; i <= total; i++) {
+  // PREVIOUS BUTTON
+  html += `
+    <button onclick="goto(${page - 1})"
+      ${page === 1 ? "disabled" : ""}
+      class="page-btn">
+      ← Prev
+    </button>
+  `;
+
+  let start = Math.max(1, page - 2);
+  let end = Math.min(total, page + 2);
+
+  if (start > 1) {
+    html += `<span class="page-num" onclick="goto(1)">1</span>`;
+    if (start > 2) html += `<span class="dots">...</span>`;
+  }
+
+  for (let i = start; i <= end; i++) {
     html += `
       <span onclick="goto(${i})"
-        style="margin:5px;cursor:pointer;
-        ${i === page ? "font-weight:bold;color:#2563eb" : ""}">
+        class="page-num ${i === page ? "active-page" : ""}">
         ${i}
       </span>
     `;
   }
+
+  if (end < total) {
+    if (end < total - 1) html += `<span class="dots">...</span>`;
+    html += `<span class="page-num" onclick="goto(${total})">${total}</span>`;
+  }
+
+  // NEXT BUTTON
+  html += `
+    <button onclick="goto(${page + 1})"
+      ${page === total ? "disabled" : ""}
+      class="page-btn">
+      Next →
+    </button>
+  `;
 
   el.innerHTML = html;
 }
