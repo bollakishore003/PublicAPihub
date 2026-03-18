@@ -306,7 +306,7 @@ body.dark .ad-card {
 // 🚀 FORCE ALL /category/* TO LOAD INDEX
 (function () {
   const path = window.location.pathname;
-
+  console.log("Current path:", path);
   if (path.startsWith("/category/")) {
     sessionStorage.setItem("redirect", path);
     window.location.replace("/");
