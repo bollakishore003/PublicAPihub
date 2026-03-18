@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Page Not Found</title>
+
+  <script>
+    // Save the current path and redirect to home
+    sessionStorage.redirect = location.pathname + location.search;
+    window.location.href = "/";
+  </script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: #f9fafb;
+    }
+
+    .box {
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <h1>404</h1>
+    <p>Redirecting...</p>
+  </div>
+</body>
+</html>

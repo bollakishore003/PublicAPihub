@@ -310,10 +310,21 @@ let page = 1;
 const limit = 12;
 let favs = JSON.parse(localStorage.getItem("fav")) || [];
 
+
 /* =========================
    URL CATEGORY LOGIC
 ========================= */
 let activeCategory = "All";
+
+// Handle redirect from 404
+(function () {
+  const redirect = sessionStorage.redirect;
+  delete sessionStorage.redirect;
+
+  if (redirect) {
+    window.history.replaceState({}, "", redirect);
+  }
+})();
 
 function getCategoryFromURL() {
   const path = window.location.pathname;
