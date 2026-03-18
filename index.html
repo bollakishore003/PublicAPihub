@@ -378,7 +378,7 @@ fetch("./Public_APIs_Organized.json")
     raw = j;
 
     if (!raw || Object.keys(raw).length === 0) return;
-
+    all = [];
     // ✅ Build API list correctly
     Object.keys(j).forEach(cat => {
       j[cat].forEach(a => {
@@ -605,13 +605,16 @@ function goto(p){
    SEARCH
 ========================= */
 function searchAPI(val){
+  const search = val.toLowerCase();
+
   filtered = all.filter(x =>
-    x.name.toLowerCase().includes(val.toLowerCase())
+    (activeCategory === "All" || x.cat === activeCategory) &&
+    x.name.toLowerCase().includes(search)
   );
+
   page = 1;
   render();
 }
-
 /* =========================
    MODAL
 ========================= */
