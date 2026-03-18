@@ -5,16 +5,18 @@
   <title>Redirecting...</title>
 
   <script>
-    // 🔒 Force HTTPS
-    //if (location.protocol !== 'https:') {
-    //  location.replace('https://' + location.host + location.pathname + location.search);
-    //}
+    (function () {
+      const path = location.pathname + location.search;
 
-    // Save path for SPA redirect
-    sessionStorage.redirect = location.pathname + location.search;
+      // Save the requested path
+      sessionStorage.setItem("redirect", path);
 
-    // Redirect to homepage
-    window.location.replace('/');
+      // 🔒 Force HTTPS + WWW (optional but recommended)
+      const targetDomain = "https://www.publicapihub.com";
+
+      // Redirect ALWAYS to homepage
+      window.location.replace(targetDomain + "/");
+    })();
   </script>
 
   <style>
