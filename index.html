@@ -318,13 +318,16 @@ let activeCategory = "All";
 
 // Handle redirect from 404
 (function () {
-  const redirect = sessionStorage.redirect;
-  delete sessionStorage.redirect;
+  const redirect = sessionStorage.getItem("redirect");
 
   if (redirect) {
-    window.history.replaceState({}, "", redirect);
+    sessionStorage.removeItem("redirect");
+
+    // Restore correct URL BEFORE app runs
+    window.history.replaceState(null, null, redirect);
   }
 })();
+
 function slugify(str) {
   return str
     .toLowerCase()
@@ -348,6 +351,8 @@ function getCategoryFromURL() {
   return "all";
 }
 
+
+
 /* =========================
    API MAPPING
 ========================= */
@@ -367,25 +372,34 @@ function mapAPI(api) {
 /* =========================
    FETCH DATA
 ========================= */
-fetch("Public_APIs_Organized.json")
-.then(r => r.json())
-.then(j => {
-  raw = j;
+fetch("./Public_APIs_Organized.json")
+  .then(r => r.json())
+  .then(j => {
+    raw = j;
 
-  Object.keys(j).forEach(cat => {
-    j[cat].forEach(a => {
-      let x = mapAPI(a);
-      x.cat = cat;
-      all.push(x);
+    if (!raw || Object.keys(raw).length === 0) return;
+
+    // ✅ Build API list correctly
+    Object.keys(j).forEach(cat => {
+      j[cat].forEach(a => {
+        let x = mapAPI(a);
+        x.cat = cat;
+        all.push(x);
+      });
     });
+
+    console.log("Loaded categories:", Object.keys(raw));
+    console.log("Total APIs:", all.length);
+
+    // ✅ Apply URL category AFTER data is ready
+    applyCategoryFromURL();
+
+    loadCategories();
+    render();
+  })
+  .catch(err => {
+    console.error("JSON load failed:", err);
   });
-
-  // ✅ IMPORTANT: Apply AFTER data load
-  applyCategoryFromURL();
-
-  loadCategories();
-  render();
-});
 
 /* =========================
    APPLY CATEGORY FROM URL
@@ -398,37 +412,23 @@ function applyCategoryFromURL() {
   if (path.startsWith("/category/")) {
     slug = decodeURIComponent(path.split("/category/")[1]);
 
-// 🔥 FIX: remove trailing slash
     if (slug.endsWith("/")) {
       slug = slug.slice(0, -1);
     }
   }
-  if (found) {
-    activeCategory = found;
-    filtered = all.filter(x => slugify(x.cat) === slug);
-  } else {
-    activeCategory = "All";
-    filtered = [...all];  // fallback
-  }  
 
   if (!slug || slug === "all") {
     activeCategory = "All";
     filtered = [...all];
+    page = 1;
     return;
   }
 
-  // Match category properly
-  const found = Object.keys(raw).find(c =>
-    slugify(c) === slug
-  );
+  const found = Object.keys(raw).find(c => slugify(c) === slug);
 
   if (found) {
     activeCategory = found;
-
-    filtered = all.filter(x =>
-      slugify(x.cat) === slug
-    );
-
+    filtered = all.filter(x => slugify(x.cat) === slug);
     document.title = found + " APIs - Public API Hub";
   } else {
     activeCategory = "All";
