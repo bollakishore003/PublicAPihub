@@ -384,28 +384,36 @@ fetch("Public_APIs_Organized.json")
    APPLY CATEGORY FROM URL
 ========================= */
 function applyCategoryFromURL() {
-  const urlCat = getCategoryFromURL();
+  const path = window.location.pathname;
 
-  if (urlCat === "all") {
+  let slug = null;
+
+  if (path.startsWith("/category/")) {
+    slug = decodeURIComponent(path.split("/category/")[1]);
+  }
+
+  if (!slug || slug === "all") {
     activeCategory = "All";
     filtered = [...all];
-  } else {
-    const found = Object.keys(raw).find(
-      c => c.toLowerCase().replace(/\s+/g, "-") === urlCat
+    return;
+  }
+
+  // Match category properly
+  const found = Object.keys(raw).find(c =>
+    c.toLowerCase().replace(/\s+/g, "-") === slug
+  );
+
+  if (found) {
+    activeCategory = found;
+
+    filtered = all.filter(x =>
+      x.cat.toLowerCase().replace(/\s+/g, "-") === slug
     );
 
-    if (found) {
-      activeCategory = found;
-
-      filtered = all.filter(
-        x => x.cat.toLowerCase().replace(/\s+/g, "-") === urlCat
-      );
-
-      document.title = found + " APIs - Public API Hub";
-    } else {
-      activeCategory = "All";
-      filtered = [...all];
-    }
+    document.title = found + " APIs - Public API Hub";
+  } else {
+    activeCategory = "All";
+    filtered = [...all];
   }
 
   page = 1;
@@ -435,12 +443,14 @@ function loadCategories() {
    NAVIGATION (NO RELOAD)
 ========================= */
 function navigateCategory(cat) {
-  if (cat === "All") {
-    window.history.pushState({}, "", "/");
-  } else {
+  let url = "/";
+
+  if (cat !== "All") {
     const slug = cat.toLowerCase().replace(/\s+/g, "-");
-    window.history.pushState({}, "", "/category/" + slug);
+    url = "/category/" + slug;
   }
+
+  window.history.pushState({}, "", url);
 
   applyCategoryFromURL();
   loadCategories();
