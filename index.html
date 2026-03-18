@@ -360,7 +360,7 @@ function fetchWithTimeout(url, ms) {
   );
 }
 
-fetchWithTimeout("./Public_APIs_Organized.json", 10000)
+fetchWithTimeout("/Public_APIs_Organized.json", 10000)
   .then((r) => {
     if (!r.ok) {
       throw new Error("HTTP " + r.status);
