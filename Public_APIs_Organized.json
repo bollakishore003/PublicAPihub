@@ -4868,50 +4868,6 @@
       "logo": "",
       "sponsored": false
     }
-  ],
-  "Credits": [],
-  "Resources For Design and Discov": [
-    {
-      "name": "Abstract",
-      "description": "Suite of utility API's (validate emails, create user avatars, calculate VAT, and more)",
-      "auth": "** Paid **",
-      "https": true,
-      "link": "https://www.abstractapi.com",
-      "pricing": "Paid",
-      "logo": "api_logos/005_abstractapi_com.png",
-      "sponsored": false
-    },
-    {
-      "name": "Apiary",
-      "description": "Collaborative tool to design APIs.",
-      "auth": "** Paid **",
-      "https": true,
-      "link": "https://apiary.io/",
-      "pricing": "Paid",
-      "logo": "api_logos/019_apiary_io.png",
-      "sponsored": false
-    },
-    {
-      "name": "OpenAPI",
-      "description": "Standard, language-agnostic interface to REST APIs (based on [Swagger](http://swagger.io/)).",
-      "auth": "![Open Source](https://raw.githubusercontent.com/abhishekbanthia/Public-APIs/master/opensource.png \"Open Source\")",
-      "https": true,
-      "link": "https://www.openapis.org",
-      "pricing": "Free",
-      "logo": "api_logos/233_openapis_org.png",
-      "sponsored": false
-    },
-    {
-      "name": "Swagger",
-      "description": "Tools for designing, building, and documenting RESTful APIs.",
-      "auth": "![Open Source](https://raw.githubusercontent.com/abhishekbanthia/Public-APIs/master/opensource.png \"Open Source\")",
-      "https": true,
-      "link": "http://swagger.io/",
-      "pricing": "Free",
-      "logo": "api_logos/312_swagger_io.png",
-      "sponsored": false
-    }
-  ],
-  "More Resources": [],
-  "Contributions": []
+  ]
+  
 }
