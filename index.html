@@ -458,6 +458,28 @@ function loadCategories() {
   });
 }
 
+
+function filterCategories(val) {
+  const el = document.getElementById("categories");
+  const search = val.toLowerCase();
+
+  el.innerHTML = `
+    <div class="category ${activeCategory==="All"?"active":""}" onclick="navigateCategory('All')">
+      All
+    </div>
+  `;
+
+  Object.keys(raw)
+    .filter(c => c.toLowerCase().includes(search))
+    .forEach(c => {
+      el.innerHTML += `
+        <div class="category ${activeCategory===c?"active":""}" onclick="navigateCategory('${c}')">
+          ${c}
+        </div>
+      `;
+    });
+}
+
 /* =========================
    NAVIGATION (NO RELOAD)
 ========================= */
