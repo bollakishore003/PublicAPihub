@@ -385,7 +385,7 @@ function mapAPI(api) {
 /* =========================
    FETCH DATA
 ========================= */
-fetch("./Public_APIs_Organized.json")
+fetch("/Public_APIs_Organized.json")
   .then(r => r.json())
   .then(j => {
     raw = j;
