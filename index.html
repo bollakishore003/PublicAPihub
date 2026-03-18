@@ -335,9 +335,7 @@ function getCategoryFromURL() {
   const path = window.location.pathname;
 
   if (path.startsWith("/category/")) {
-    return decodeURIComponent(path.split("/category/")[1])
-      .replace(/-/g, " ")
-      .toLowerCase();
+    return decodeURIComponent(path.split("/category/")[1]);
   }
 
   return "all";
@@ -393,12 +391,15 @@ function applyCategoryFromURL() {
     filtered = [...all];
   } else {
     const found = Object.keys(raw).find(
-      c => c.toLowerCase() === urlCat
+      c => c.toLowerCase().replace(/\s+/g, "-") === urlCat
     );
 
     if (found) {
       activeCategory = found;
-      filtered = all.filter(x => x.cat === found);
+
+      filtered = all.filter(
+        x => x.cat.toLowerCase().replace(/\s+/g, "-") === urlCat
+      );
 
       document.title = found + " APIs - Public API Hub";
     } else {
@@ -409,7 +410,6 @@ function applyCategoryFromURL() {
 
   page = 1;
 }
-
 /* =========================
    CATEGORY UI
 ========================= */
