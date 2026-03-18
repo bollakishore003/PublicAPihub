@@ -325,6 +325,13 @@ let activeCategory = "All";
     window.history.replaceState({}, "", redirect);
   }
 })();
+function slugify(str) {
+  return str
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')   // remove special chars
+    .replace(/\s+/g, '-');      // spaces → dash
+}
 
 // 🔒 Force HTTPS globally
 //if (location.protocol !== 'https:') {
@@ -396,6 +403,13 @@ function applyCategoryFromURL() {
       slug = slug.slice(0, -1);
     }
   }
+  if (found) {
+    activeCategory = found;
+    filtered = all.filter(x => slugify(x.cat) === slug);
+  } else {
+    activeCategory = "All";
+    filtered = [...all];  // fallback
+  }  
 
   if (!slug || slug === "all") {
     activeCategory = "All";
@@ -405,14 +419,14 @@ function applyCategoryFromURL() {
 
   // Match category properly
   const found = Object.keys(raw).find(c =>
-    c.toLowerCase().replace(/\s+/g, "-") === slug
+    slugify(c) === slug
   );
 
   if (found) {
     activeCategory = found;
 
     filtered = all.filter(x =>
-      x.cat.toLowerCase().replace(/\s+/g, "-") === slug
+      slugify(x.cat) === slug
     );
 
     document.title = found + " APIs - Public API Hub";
@@ -451,7 +465,7 @@ function navigateCategory(cat) {
   let url = "/";
 
   if (cat !== "All") {
-    const slug = cat.toLowerCase().replace(/\s+/g, "-");
+    const slug = slugify(cat);
     url = "/category/" + slug;
   }
 
