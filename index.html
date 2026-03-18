@@ -304,10 +304,12 @@ body.dark .ad-card {
 
 <script>
 // 🚀 FORCE ALL /category/* TO LOAD INDEX
+// 🚀 FORCE /category/* → load index.html
 (function () {
   const path = window.location.pathname;
-  console.log("Current path:", path);
-  if (path.startsWith("/category/")) {
+
+  // prevent infinite loop
+  if (path.startsWith("/category/") && !sessionStorage.getItem("redirect")) {
     sessionStorage.setItem("redirect", path);
     window.location.replace("/");
   }
