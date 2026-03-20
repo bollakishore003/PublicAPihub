@@ -310,17 +310,27 @@ body.dark .ad-card {
 
 <body>
 
-<header>
-  <h3>🚀 Public API Hub</h3>
-  <p>Browse hundreds of free public APIs categorized for developers.</p>
-
-  <div style="display:flex; gap:15px; align-items:center;">
+<header style="display:flex; align-items:center; justify-content:space-between; padding:10px;">
+  
+  <!-- Left: Logo + Title -->
+  <div style="display:flex; align-items:center; gap:4px;">
+    <img src="/mylogo.png" alt="Public API Hub Logo" style="height:40px;">
     
+    <div>
+      <h3 style="margin:0;">Public API Hub</h3>
+      <p style="margin:0; font-size:13px;">
+        Browse hundreds of free public APIs categorized for developers.
+      </p>
+    </div>
+  </div>
+
+  <!-- Right: Navigation -->
+  <div style="display:flex; gap:15px; align-items:center;">
     <span class="nav-link" onclick="openStatic('about')">About</span>
     <span class="nav-link" onclick="openStatic('privacy')">Privacy</span>
-
     <button onclick="toggleDark()">🌙</button>
   </div>
+
 </header>
 
 <div class="container">
