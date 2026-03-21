@@ -20,12 +20,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
+/* ==============================
+   RESET & BASE
+============================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 :root {
   --bg: #f9fafb;
   --card: #ffffff;
   --text: #111;
   --muted: #666;
   --border: #e5e7eb;
+  --header-h: 60px;
 }
 
 body.dark {
@@ -43,27 +51,102 @@ body {
   color: var(--text);
 }
 
-/* HEADER */
+/* ==============================
+   HEADER
+============================== */
 header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
+  padding: 0 20px;
+  height: var(--header-h);
   background: var(--card);
   border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 12px;
 }
 
-/* LAYOUT */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.header-left img {
+  height: 38px;
+  flex-shrink: 0;
+}
+
+.header-left h3 {
+  margin: 0;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.header-subtitle {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* Hamburger — hidden on desktop */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  font-size: 22px;
+  color: var(--text);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* ==============================
+   LAYOUT
+============================== */
 .container {
   display: flex;
-  height: calc(100vh - 65px);
+  height: calc(100vh - var(--header-h));
 }
 
-/* SIDEBAR */
+/* ==============================
+   SIDEBAR OVERLAY (mobile)
+============================== */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 198;
+}
+
+.sidebar-overlay.active {
+  display: block;
+}
+
+/* ==============================
+   SIDEBAR
+============================== */
 .sidebar {
   width: 260px;
+  flex-shrink: 0;
   background: var(--card);
   border-right: 1px solid var(--border);
-  padding: 15px;
+  padding: 14px;
   overflow-y: auto;
 }
 
@@ -71,14 +154,15 @@ header {
   padding: 10px;
   border-radius: 8px;
   cursor: pointer;
+  font-size: 14px;
 }
 
 .category:hover {
-  background: rgba(0,0,0,0.05);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 body.dark .category:hover {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .category.active {
@@ -87,41 +171,60 @@ body.dark .category:hover {
   font-weight: 600;
 }
 
-/* MAIN */
+/* ==============================
+   MAIN
+============================== */
 .main {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
+  min-width: 0;
 }
 
-/* SEARCH */
+/* ==============================
+   SEARCH
+============================== */
 .search {
   padding: 12px;
   border-radius: 10px;
   border: 1px solid var(--border);
   width: 100%;
   margin-bottom: 15px;
+  font-size: 14px;
+  background: var(--card);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
 }
 
-/* GRID */
+.search:focus {
+  border-color: #2563eb;
+}
+
+/* ==============================
+   GRID
+============================== */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 20px;
 }
 
-/* CARD */
+/* ==============================
+   CARD
+============================== */
 .card {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 16px;
-  transition: 0.3s;
-  cursor: pointer; /* 👈 ADD THIS */
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
 }
 
 .card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .card-top {
@@ -135,8 +238,8 @@ body.dark .category:hover {
   display: flex;
   align-items: center;
   font-weight: 600;
+  font-size: 15px;
 }
-
 
 .logo {
   width: 40px;
@@ -162,6 +265,7 @@ body.dark .category:hover {
   color: var(--muted);
   font-size: 14px;
   margin-top: 10px;
+  line-height: 1.5;
 }
 
 /* FAVORITE */
@@ -169,79 +273,14 @@ body.dark .category:hover {
   cursor: pointer;
 }
 
-/* PAGINATION */
-.pagination {
-  text-align: center;
-  margin-top: 20px;
-}
-
-.page-btn {
-  padding: 8px 14px;
-  margin: 5px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.page-btn:hover:not(:disabled) {
-  background: #2563eb;
-  color: white;
-}
-
-.page-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.page-num {
-  margin: 5px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.page-num:hover {
-  background: rgba(37, 99, 235, 0.1);
-}
-
-.active-page {
-  background: #2563eb;
-  color: white;
-  font-weight: 600;
-}
-
-.dots {
-  margin: 5px;
-  color: var(--muted);
-}
-
-/* MODAL */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: var(--card);
-  padding: 25px;
-  border-radius: 16px;
-  width: 500px;
-}
+/* ==============================
+   AD BANNER
+============================== */
 .ad {
   border: 1px dashed var(--border);
-  padding: 20px;
+  padding: 16px 20px;
   text-align: center;
-  margin: 15px 0;
+  margin: 0 0 16px;
   border-radius: 12px;
   background: linear-gradient(135deg, #f3f4f6, #ffffff);
   color: var(--muted);
@@ -252,12 +291,15 @@ body.dark .ad {
   background: linear-gradient(135deg, #1f2937, #111827);
 }
 
+/* ==============================
+   AD CARD (inline grid)
+============================== */
 .ad-card {
   background: var(--card);
   border: 1px dashed var(--border);
   border-radius: 14px;
   padding: 16px;
-  transition: 0.3s;
+  transition: transform 0.3s;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -265,7 +307,7 @@ body.dark .ad {
 }
 
 .ad-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
   border-color: #2563eb;
 }
 
@@ -288,26 +330,219 @@ body.dark .ad {
 body.dark .ad-card {
   background: linear-gradient(135deg, #1f2937, #111827);
 }
+
+/* ==============================
+   NAV LINKS
+============================== */
 .nav-link {
   cursor: pointer;
   font-size: 14px;
   color: var(--muted);
-  transition: 0.2s;
+  transition: color 0.2s;
+  white-space: nowrap;
 }
 
 .nav-link:hover {
   color: #2563eb;
 }
 
-@media (max-width: 768px) {
-  .ad-card {
-    grid-column: span 1;
-  }
+/* ==============================
+   PAGINATION
+============================== */
+.pagination {
+  text-align: center;
+  margin-top: 24px;
+  padding-bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.page-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 14px;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #2563eb;
+  color: white;
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.page-num {
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.page-num:hover {
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.active-page {
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+}
+
+.dots {
+  padding: 8px 4px;
+  color: var(--muted);
+}
+
+/* ==============================
+   MODAL
+============================== */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 300;
+}
+
+.modal-content {
+  background: var(--card);
+  padding: 24px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
 }
 
 .close {
   float: right;
   cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* ==============================
+   TABLET  (≤ 1024px)
+============================== */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 220px;
+  }
+
+  .header-subtitle {
+    display: none;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+}
+
+/* ==============================
+   MOBILE  (≤ 768px)
+============================== */
+@media (max-width: 768px) {
+
+  /* Show hamburger */
+  .hamburger {
+    display: block;
+  }
+
+  /* Sidebar becomes a fixed drawer */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 260px;
+    height: 100%;
+    z-index: 200;
+    padding-top: 70px;
+    transition: left 0.3s ease;
+    box-shadow: none;
+  }
+
+  .sidebar.open {
+    left: 0;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Container takes full width */
+  .container {
+    height: auto;
+    min-height: calc(100vh - var(--header-h));
+  }
+
+  /* Main fills full width */
+  .main {
+    padding: 12px;
+    width: 100%;
+  }
+
+  /* Single-column grid */
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Smaller header text */
+  .header-left h3 {
+    font-size: 14px;
+  }
+
+  /* Compact nav */
+  .nav-link {
+    font-size: 13px;
+  }
+
+  /* Pagination touch-friendly */
+  .page-btn,
+  .page-num {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  /* Ad banner compact */
+  .ad {
+    padding: 12px;
+    font-size: 13px;
+  }
+}
+
+/* ==============================
+   SMALL MOBILE  (≤ 480px)
+============================== */
+@media (max-width: 480px) {
+  header {
+    padding: 0 12px;
+  }
+
+  .header-right {
+    gap: 8px;
+  }
+
+  .main {
+    padding: 10px;
+  }
+
+  .modal-content {
+    padding: 18px;
+  }
 }
 </style>
 <script type="application/ld+json">
@@ -323,32 +558,35 @@ body.dark .ad-card {
 
 <body>
 
-<header style="display:flex; align-items:center; justify-content:space-between; padding:10px;">
-  
+<header>
+
+  <!-- Hamburger (mobile only) -->
+  <button class="hamburger" id="hamburgerBtn" aria-label="Toggle categories menu" onclick="toggleSidebar()">☰</button>
+
   <!-- Left: Logo + Title -->
-  <div style="display:flex; align-items:center; gap:4px;">
-    <img src="/mylogo.png" alt="Public API Hub Logo" style="height:40px;">
-    
+  <div class="header-left">
+    <img src="/mylogo.png" alt="Public API Hub Logo">
     <div>
-      <h3 style="margin:0;">Public API Hub</h3>
-      <p style="margin:0; font-size:13px;">
-        Browse hundreds of free public APIs categorized for developers.
-      </p>
+      <h3>Public API Hub</h3>
+      <p class="header-subtitle">Browse hundreds of free public APIs categorized for developers.</p>
     </div>
   </div>
 
   <!-- Right: Navigation -->
-  <div style="display:flex; gap:15px; align-items:center;">
+  <div class="header-right">
     <span class="nav-link" onclick="openStatic('about')">About</span>
     <span class="nav-link" onclick="openStatic('privacy')">Privacy</span>
-    <button onclick="toggleDark()">🌙</button>
+    <button onclick="toggleDark()" style="background:none;border:none;cursor:pointer;font-size:18px;">🌙</button>
   </div>
 
 </header>
 
+<!-- Sidebar overlay (mobile tap-to-close) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 <div class="container">
 
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
   <input class="search" placeholder="Search categories..." onkeyup="filterCategories(this.value)">
   <div id="categories"></div>
 </div>
@@ -563,6 +801,17 @@ function navigateCategory(cat) {
   applyCategoryFromURL();
   loadCategories();
   render();
+
+  // Auto-close sidebar on mobile after selecting a category
+  if (window.innerWidth <= 768) {
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+    if (sidebar && sidebar.classList.contains("open")) {
+      sidebar.classList.remove("open");
+      overlay.classList.remove("active");
+      document.body.style.overflow = "";
+    }
+  }
 }
 
 window.onpopstate = () => {
@@ -758,6 +1007,36 @@ function closeModal(e) {
 function toggleDark() {
   document.body.classList.toggle("dark");
 }
+
+/* =========================
+   SIDEBAR TOGGLE (mobile)
+========================= */
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("sidebarOverlay");
+  const isOpen = sidebar.classList.contains("open");
+
+  if (isOpen) {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("active");
+    document.body.style.overflow = "";
+  } else {
+    sidebar.classList.add("open");
+    overlay.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+}
+
+// Close sidebar on window resize to desktop width
+window.addEventListener("resize", function () {
+  if (window.innerWidth > 768) {
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+    sidebar.classList.remove("open");
+    overlay.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+});
 </script>
 
 </body>
